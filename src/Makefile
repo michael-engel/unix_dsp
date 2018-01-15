@@ -1,4 +1,4 @@
-SOURCES := main.c
+SOURCES := $(wildcard *.c)
 OBJECTS := ${SOURCES:.c=.o}
 EXECUTABLE := executable
 CC := gcc
