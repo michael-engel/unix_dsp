@@ -35,10 +35,13 @@ void csv_to_gnuplot_eps(char* name);
 // Attenuates 785 Hz frequencies
 short myNotchFilter(short xn);
 
-// dft algorithm
+// DFT algorithm
 float dft(int16_t* x, int32_t m, int32_t N);
 
+// Shifts in_array' of size' shift' number of times and outputs to out_array'
+void shift_arr(int32_t* in_array, int32_t* out_array, int32_t size, int32_t shift);
+
 // Convolution of signal x with signal y
-void convolution(int32_t* x, int32_t* y, int32_t* out_array, int32_t size_x, int32_t size_y)
+void convolution(int32_t* x, int32_t* y, int32_t* out_array, int32_t size_x, int32_t size_y);
 
 #endif //AUDIO_H

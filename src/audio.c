@@ -224,6 +224,20 @@ float dft(int16_t* x, int32_t m, int32_t N)
     return sqrt(pow(Xre[m],2) + pow(Xim[m],2));
 }
 
+void shift_arr(int32_t* in_array, int32_t* out_array, int32_t size, int32_t shift)
+{
+    for (int32_t i = 0; i < size; ++i)
+    {
+        if (i + shift < 0 || i + shift >= size)
+        {
+            out_array[i] = 0;
+        }
+
+        else
+            out_array[i] = in_array[i+shift];
+    }
+}
+
 void convolution(int32_t* x, int32_t* y, int32_t* out_array, int32_t size_x, int32_t size_y)
 {
     int32_t y_tmp[size_y];
