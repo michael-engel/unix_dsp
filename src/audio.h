@@ -44,4 +44,10 @@ void shift_arr(int32_t* in_array, int32_t* out_array, int32_t size, int32_t shif
 // Convolution of signal x with signal y
 void convolution(int32_t* x, int32_t* y, int32_t* out_array, int32_t size_x, int32_t size_y);
 
+// BROKEN: X-correlation made with same algorithm as convolution
+void x_corr_1(int32_t* x, int32_t* y, int32_t* out_array, int32_t size_x, int32_t size_y);
+
+// X-correlation of signal x and y
+void x_corr(int32_t* x, int32_t* y, int32_t* out_array, int32_t size);
+
 #endif //AUDIO_H

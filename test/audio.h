@@ -3,7 +3,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include "audio.h"
 
 static char cmd[200];
 
@@ -91,25 +90,6 @@ void write_csv(int32_t* x_data, int16_t* y_data, char* name, int N, int scale)
     	fprintf(csvfile, "%d;%d\n", x_data[n], y_data[n]);
     fclose(csvfile);
 }
-
-// Writes csv-file
-void write_csv_float(int32_t* x_data, float* y_data, char* name, int N, int scale)
-{
-    // Print the sample values in the buffer to a CSV file
-    if(scale < 1)
-    {
-        printf("Scale has to be bigger than 1.\n");
-        return;
-    }
-    FILE *csvfile;
-    strcpy(cmd, name);
-    strcat(cmd, ".csv");
-    csvfile = fopen(cmd, "w");
-    for (int32_t n = 0 ; n < N ; n += scale)
-        fprintf(csvfile, "%d;%f\n", x_data[n], y_data[n]);
-    fclose(csvfile);
-}
-
 
 // Opens gnuplot from csv-file with name
 void csv_to_gnuplot(char* name)
@@ -205,74 +185,4 @@ short myNotchFilter(short xn)
 	y[n] = yn;
 	n = (n+1) % Ncnt;
 	return yn;
-}
-
-float dft(int16_t* x, int32_t m, int32_t N)
-{
-    #define PI2 6.2832
-    // time and frequency domain data arrays
-    float Xre[N], Xim[N];
-
-    // Real part of X[k]
-    Xre[m] = 0;
-    for (int n=0 ; n<N ; ++n) Xre[m] += x[n] * cos(n * m * PI2 / N);
-     
-    // Imaginary part of X[k]
-    Xim[m] = 0;
-    for (int n=0 ; n<N ; ++n) Xim[m] -= x[n] * sin(n * m * PI2 / N);
-            
-    return sqrt(pow(Xre[m],2) + pow(Xim[m],2));
-}
-
-void shift_arr(int32_t* in_array, int32_t* out_array, int32_t size, int32_t shift)
-{
-    for (int32_t i = 0; i < size; ++i)
-    {
-        if (i + shift < 0 || i + shift >= size)
-        {
-            out_array[i] = 0;
-        }
-
-        else
-            out_array[i] = in_array[i+shift];
-    }
-}
-
-void convolution(int32_t* x, int32_t* y, int32_t* out_array, int32_t size_x, int32_t size_y)
-{
-    int32_t y_tmp[size_y];
-    for (int32_t n = 0; n < size_y+size_x-1; ++n)
-    {
-        for (int32_t k = 0; k < size_x; ++k)
-        {
-            shift_arr(y, y_tmp, size_y, n-k);
-            printf("x(%d) = %d, y(%d-%d) = %d\n",k, x[k], n, k, y_tmp[0]);
-            out_array[n] += x[k] * y_tmp[0];
-        }
-    }
-}
-
-void x_corr(int32_t* x, int32_t* y, int32_t* out_array, int32_t size)
-{
-    for (int32_t n = 0; n < 2*size-1; ++n)
-    {
-        int32_t y_tmp[size];
-        shift_arr(y, y_tmp, size, n-size+1);
-        for (int32_t k = 0; k < size; ++k)
-            out_array[n] += x[k] * y_tmp[k];
-    }
-}
-
-void x_corr_1(int32_t* x, int32_t* y, int32_t* out_array, int32_t size_x, int32_t size_y)
-{
-    int32_t y_tmp[size_y];
-    for (int32_t n = 0; n < size_y+size_x-1; ++n)
-    {
-        for (int32_t k = 0; k < size_x; ++k)
-        {
-            shift_arr(y, y_tmp, size_y, n+k);
-            printf("x(%d) = %d, y(%d+%d) = %d\n",k, x[k], n, k, y_tmp[0]);
-            out_array[n] += x[k] * y_tmp[0];
-        }
-    }
 }
